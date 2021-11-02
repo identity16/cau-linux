@@ -1,0 +1,1 @@
+cmd_/home/wonjun/Desktop/linked-list-module/linked-list-module.mod := { echo  /home/wonjun/Desktop/linked-list-module/linked-list-module.o; echo; } > /home/wonjun/Desktop/linked-list-module/linked-list-module.mod
