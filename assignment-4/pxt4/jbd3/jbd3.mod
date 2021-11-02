@@ -1,0 +1,2 @@
+/home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/transaction.o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/commit.o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/recovery.o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/checkpoint.o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/revoke.o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/journal.o
+
