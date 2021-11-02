@@ -1,1 +1,0 @@
-cmd_/home/wonjun/Desktop/linked-list-module/linked-list-module.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000  --build-id  -T ./scripts/module-common.lds -o /home/wonjun/Desktop/linked-list-module/linked-list-module.ko /home/wonjun/Desktop/linked-list-module/linked-list-module.o /home/wonjun/Desktop/linked-list-module/linked-list-module.mod.o;  true
