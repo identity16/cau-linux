@@ -1,1 +1,0 @@
-cmd_/home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/jbd3.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000  --build-id  -T ./scripts/module-common.lds -o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/jbd3.ko /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/jbd3.o /home/wonjun/Documents/cau-linux/assignment-4/pxt4/jbd3/jbd3.mod.o;  true
