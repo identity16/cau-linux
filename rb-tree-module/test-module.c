@@ -5,15 +5,9 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
-#include <linux/rbtree.h>
 #include <linux/slab.h> // for kmalloc
 #include <linux/time.h>
 
-struct my_type {
-    struct rb_node node;
-    int key;
-    int value;
-};
 
 int __init rb_tree_module_init(void) {
 	printk("Hello, Module\n");
