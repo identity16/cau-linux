@@ -15,12 +15,6 @@ struct my_type {
     int value;
 };
 
-int rb_insert(struct rb_root *root, struct my_type *data);
-struct my_type *rb_search(struct rb_root *root, int key);
-int rb_delete(struct rb_root *mytree, int key);
-
-unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
-
 void add_to_rb_tree(int count);
 void remove_from_rb_tree(int count);
 void search_from_rb_tree(int count, int num);
