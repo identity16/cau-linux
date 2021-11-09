@@ -15,13 +15,6 @@ struct my_type {
     int value;
 };
 
-
-struct my_type {
-	struct rb_node node;
-	int key;
-	int value;
-};
-
 int rb_insert(struct rb_root *root, struct my_type *data);
 struct my_type *rb_search(struct rb_root *root, int key);
 int rb_delete(struct rb_root *mytree, int key);
