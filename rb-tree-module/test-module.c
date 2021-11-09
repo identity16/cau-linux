@@ -5,9 +5,15 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
-#include <linux/list.h>
+#include <linux/rbtree.h>
 #include <linux/slab.h> // for kmalloc
 #include <linux/time.h>
+
+struct my_type {
+    struct rb_node node;
+    int key;
+    int value;
+};
 
 
 struct my_type {
@@ -50,7 +56,6 @@ void __exit rb_tree_module_cleanup(void) {
 module_init(rb_tree_module_init);
 module_exit(rb_tree_module_cleanup);
 MODULE_LICENSE("GPL");
-
 
 int rb_insert(struct rb_root *root, struct my_type *data) {
 	struct rb_node **new = &(root->rb_node), *parent = NULL;
@@ -102,6 +107,25 @@ int rb_delete(struct rb_root *mytree, int key) {
 	}
 
 	return FALSE;
+}
+
+unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count) {
+	long temp, temp_n;
+	unsigned long long timedelay = 0;
+
+	if (spclock[1].tv_nsec >= spclock[0].tv_nsec) {
+		temp = spclock[1].tv_sec - spclock[0].tv_sec;
+		temp_n = spclock[1].tv_nsec - spclock[0].tv_nsec;
+		timedelay = BILLION * temp + temp_n;
+	} else {
+		temp = spclock[1].tv_sec - spclock[0].tv_sec + 1;
+		temp_n = BILLION + spclock[1].tv_nsec - spclock[0].tv_nsec;
+		timedelay = BILLION * temp + temp_n;
+	}
+
+	__sync_fetch_and_add(total_time, timedelay);
+	__sync_fetch_and_add(total_count, 1);
+	return timedelay;
 }
 
 void add_to_rb_tree(int count) {
