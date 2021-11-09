@@ -26,11 +26,12 @@ int rb_insert(struct rb_root *root, struct my_type *data);
 struct my_type *rb_search(struct rb_root *root, int key);
 int rb_delete(struct rb_root *mytree, int key);
 
+unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
+
 void add_to_rb_tree(int count);
 void remove_from_rb_tree(int count);
 void search_from_rb_tree(int count, int num);
 
-unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
 int __init rb_tree_module_init(void) {
 	add_to_rb_tree(1000);
@@ -224,23 +225,4 @@ void remove_from_rb_tree(int count) {
 	delay = calclock(spclock, &tree_time, &tree_count);
 	printk("Delete for %d times, delay: %llu\n", count, delay);
 
-}
-
-unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count) {
-	long temp, temp_n;
-	unsigned long long timedelay = 0;
-
-	if (spclock[1].tv_nsec >= spclock[0].tv_nsec) {
-		temp = spclock[1].tv_sec - spclock[0].tv_sec;
-		temp_n = spclock[1].tv_nsec - spclock[0].tv_nsec;
-		timedelay = BILLION * temp + temp_n;
-	} else {
-		temp = spclock[1].tv_sec - spclock[0].tv_sec + 1;
-		temp_n = BILLION + spclock[1].tv_nsec - spclock[0].tv_nsec;
-		timedelay = BILLION * temp + temp_n;
-	}
-
-	__sync_fetch_and_add(total_time, timedelay);
-	__sync_fetch_and_add(total_count, 1);
-	return timedelay;
 }
