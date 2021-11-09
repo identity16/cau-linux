@@ -19,7 +19,7 @@ void search_from_linked_list(int count, int num);
 
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
-int __init linked_list_module_init(void) {
+int __init rb_tree_module_init(void) {
 	add_to_linked_list(1000);
 	add_to_linked_list(10000);
 	add_to_linked_list(100000);
@@ -36,12 +36,12 @@ int __init linked_list_module_init(void) {
 	return 0;
 }
 
-void __exit linked_list_module_cleanup(void) {
+void __exit rb_tree_module_cleanup(void) {
 	printk("Bye Module\n");
 }
 
-module_init(linked_list_module_init);
-module_exit(linked_list_module_cleanup);
+module_init(rb_tree_module_init);
+module_exit(rb_tree_module_cleanup);
 MODULE_LICENSE("GPL");
 
 void add_to_linked_list(int count) {
