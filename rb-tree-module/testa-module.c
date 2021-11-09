@@ -58,19 +58,18 @@ int rb_insert(struct rb_root *root, struct my_type *data) {
 
 struct my_type *rb_search(struct rb_root *root, int key) {
 	struct rb_node *node = root->rb_node;
+    
+    while (node) {
+        struct my_type *data = container_of(node, struct my_type, node);
+        if(data->key > key)
+            node = node->rb_left;
+        else if(data->key < key)
+            node = node->rb_right;
+        else
+            return data;
+    }
 
-	while(node) {
-		struct my_type *data = container_of(node, struct my_type, node);
-		if(data->key > key) {
-			node = node->rb_left;
-		} else if(data->key < key) {
-			node = node->rb_right;
-		} else {
-			return data;
-		}
-	}
-	
-	return NULL;
+    return NULL;
 }
 
 int rb_delete(struct rb_root *mytree, int key) {
@@ -144,7 +143,7 @@ void search_from_rb_tree(int count, int num) {
 	unsigned long long tree_count;
 	unsigned long long delay;	
 	
-	struct my_type *find_node = rb_search(&my_tree, num);
+	struct my_type *find_node;
 	
 	/* add node */
 	for(i=0; i<count; i++) {
@@ -153,6 +152,8 @@ void search_from_rb_tree(int count, int num) {
 		new->key = i;
 		rb_insert(&my_tree, new);
 	}
+
+    find_node = rb_search(&my_tree, num);
 	
 	
 	getnstimeofday(&spclock[0]);
