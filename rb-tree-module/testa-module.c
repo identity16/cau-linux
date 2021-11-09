@@ -21,7 +21,18 @@ void search_from_rb_tree(int count, int num);
 
 
 int __init rb_tree_module_init(void) {
-	printk("Hello, Module\n");
+    add_to_rb_tree(1000);
+	add_to_rb_tree(10000);
+	add_to_rb_tree(100000);
+
+
+	search_from_rb_tree(1000, 749);
+	search_from_rb_tree(10000, 3711);
+	search_from_rb_tree(100000, 86032);
+
+	remove_from_rb_tree(1000);
+	remove_from_rb_tree(10000);
+	remove_from_rb_tree(100000);
 
 	return 0;
 }
