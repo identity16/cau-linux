@@ -19,7 +19,7 @@ int main() {
         data = 3;
     }
 
-    print("data = %d\n", data);
+    printf("data = %d\n", data);
 
     return 0;
 }
