@@ -19,8 +19,8 @@ struct task_struct *thread1, *thread2, *thread3, *thread4;
 unsigned long long delay;
 
 struct my_node {
-	struct list_head list;
-	int data;
+    struct list_head list;
+    int data;
 };
 
 struct my_node *current_node, *prev_node;
@@ -41,14 +41,14 @@ static int writer_function(void *data) {
             getnstimeofday(&spclock[1]);
 
             delay = calclock(spclock);
-            printk("spinlock linked list insertion: %lluns\n", delay);
+            printk("spinlock linked list insert: %lluns\n", delay);
             getnstimeofday(&spclock[0]);
 
             current_node = list_first_entry(&my_list, struct my_node, list);
         }
 
-	counter++;
-	
+        counter++;
+    
 
         spin_unlock(&counter_lock);
     }
@@ -66,14 +66,14 @@ static int writer_function(void *data) {
             printk("spinlock linked list search: %lluns\n", delay);
             counter = MAX_COUNT * 2;
 
-            current_node = list_next_entry(current_node, list);
+            current_node = list_first_entry(&my_list, struct my_node, list);
             
-	    getnstimeofday(&spclock[0]);
+            getnstimeofday(&spclock[0]);
             spin_unlock(&counter_lock);
             break;
         } else {
-	    counter++;
-	}	
+            counter++;
+        }
 
         current_node = list_next_entry(current_node, list);
 
@@ -81,6 +81,25 @@ static int writer_function(void *data) {
         spin_unlock(&counter_lock);
     }
 
+    // REMOVE
+     while(counter < MAX_COUNT * 3) {
+        spin_lock(&counter_lock);
+
+        list_del(&current_node->list);
+		kfree(current_node);
+
+        if(counter == MAX_COUNT * 3 - 1) {
+            getnstimeofday(&spclock[1]);
+
+            delay = calclock(spclock);
+            printk("spinlock linked list remove: %lluns\n", delay);
+        }
+
+        counter++;
+        current_node = list_next_entry(current_node, list);
+
+        spin_unlock(&counter_lock);
+    }
 
     do_exit(0);
 }
@@ -92,7 +111,7 @@ static int __init spinlock_mod_init(void) {
     
     INIT_LIST_HEAD(&my_list);
 
-	getnstimeofday(&spclock[0]);
+    getnstimeofday(&spclock[0]);
     spin_lock_init(&counter_lock);
     thread1 = kthread_run(writer_function, NULL, "writer_function");
     thread2 = kthread_run(writer_function, NULL, "writer_function");
@@ -113,18 +132,18 @@ MODULE_LICENSE("GPL");
 
 
 unsigned long long calclock(struct timespec *spclock) {
-	long temp, temp_n;
-	unsigned long long timedelay = 0;
+    long temp, temp_n;
+    unsigned long long timedelay = 0;
 
-	if (spclock[1].tv_nsec >= spclock[0].tv_nsec) {
-		temp = spclock[1].tv_sec - spclock[0].tv_sec;
-		temp_n = spclock[1].tv_nsec - spclock[0].tv_nsec;
-		timedelay = BILLION * temp + temp_n;
-	} else {
-		temp = spclock[1].tv_sec - spclock[0].tv_sec + 1;
-		temp_n = BILLION + spclock[1].tv_nsec - spclock[0].tv_nsec;
-		timedelay = BILLION * temp + temp_n;
-	}
+    if (spclock[1].tv_nsec >= spclock[0].tv_nsec) {
+        temp = spclock[1].tv_sec - spclock[0].tv_sec;
+        temp_n = spclock[1].tv_nsec - spclock[0].tv_nsec;
+        timedelay = BILLION * temp + temp_n;
+    } else {
+        temp = spclock[1].tv_sec - spclock[0].tv_sec + 1;
+        temp_n = BILLION + spclock[1].tv_nsec - spclock[0].tv_nsec;
+        timedelay = BILLION * temp + temp_n;
+    }
 
-	return timedelay;
+    return timedelay;
 }
