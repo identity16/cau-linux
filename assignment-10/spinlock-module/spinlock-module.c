@@ -67,7 +67,6 @@ static int writer_function(void *data) {
             counter = MAX_COUNT * 2;
 
             current_node = list_first_entry(&my_list, struct my_node, list);
-            
             getnstimeofday(&spclock[0]);
             spin_unlock(&counter_lock);
             break;
@@ -82,11 +81,15 @@ static int writer_function(void *data) {
     }
 
     // REMOVE
-     while(counter < MAX_COUNT * 3) {
+    struct my_node *tmp;
+    
+    while(counter < MAX_COUNT * 3) {
         spin_lock(&counter_lock);
-
-        list_del(&current_node->list);
-		kfree(current_node);
+        
+	tmp = current_node;
+        current_node = list_next_entry(tmp, list);
+        list_del(&tmp->list);
+	kfree(tmp);
 
         if(counter == MAX_COUNT * 3 - 1) {
             getnstimeofday(&spclock[1]);
@@ -96,7 +99,6 @@ static int writer_function(void *data) {
         }
 
         counter++;
-        current_node = list_next_entry(current_node, list);
 
         spin_unlock(&counter_lock);
     }
