@@ -23,6 +23,7 @@ struct my_node {
 	int data;
 };
 
+struct my_node *current_node, *prev_node;
 struct list_head my_list;
 
 unsigned long long calclock(struct timespec *spclock);
@@ -33,49 +34,53 @@ static int writer_function(void *data) {
         struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
 
         spin_lock(&counter_lock);
-        counter++;
         new->data = counter;
         list_add(&new->list, &my_list);
 
-        if(counter == MAX_COUNT) {
+        if(counter == MAX_COUNT - 1) {
             getnstimeofday(&spclock[1]);
 
             delay = calclock(spclock);
             printk("spinlock linked list insertion: %lluns\n", delay);
             getnstimeofday(&spclock[0]);
+
+            current_node = list_first_entry(&my_list, struct my_node, list);
         }
+
+	counter++;
+	
+
         spin_unlock(&counter_lock);
     }
 
-    __sync_val_compare_and_swap(&counter, MAX_COUNT, 0);
-
     // SEARCH
     int finding_num = 47182;
-    struct my_node *current_node, *prev_node;
-    prev = my_list;
 
-    while(counter < MAX_COUNT) {
+    while(counter < MAX_COUNT * 2) {
         spin_lock(&counter_lock);
-        counter++;
-        current_node = prev_node->list;
-        prev_node = current_node;
 
-        if(current->data == finding_num || counter == MAX_COUNT) {
+        if(current_node->data == finding_num || counter == MAX_COUNT * 2 - 1) {
             getnstimeofday(&spclock[1]);
 
             delay = calclock(spclock);
             printk("spinlock linked list search: %lluns\n", delay);
-            counter = MAX_COUNT;
+            counter = MAX_COUNT * 2;
 
-            getnstimeofday(&spclock[0]);
+            current_node = list_next_entry(current_node, list);
+            
+	    getnstimeofday(&spclock[0]);
             spin_unlock(&counter_lock);
             break;
-        }
+        } else {
+	    counter++;
+	}	
+
+        current_node = list_next_entry(current_node, list);
+
 
         spin_unlock(&counter_lock);
     }
 
-    __sync_val_compare_and_swap(&counter, MAX_COUNT, 0);
 
     do_exit(0);
 }
