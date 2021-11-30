@@ -28,6 +28,7 @@ int list_num = 1;
 unsigned long long delay[3] = {0,};
 
 spinlock_t list_lock;
+struct timespec spclock[2];
 struct task_struct *thread1, *thread2, *thread3, *thread4;
 
 int insert_linked_list(void *ptr_head);
@@ -69,6 +70,16 @@ int insert_linked_list(void *ptr_head) {
 	}
 
     __sync_fetch_and_add(&thread_done, 1);
+    if(thread_done == 4) {
+        getnstimeofday(&spclock[1]);
+
+        thread_done = 0;
+        list_num = 1;
+
+        delay[INSERT] = calclock(spclock, &list_time, &list_count);
+        printk("linked list insert time: %lluns\n", delay[INSERT]);
+    }
+    do_exit();
     return 0;
 }
 
@@ -80,7 +91,6 @@ void perform_linked_list() {
 	int i;
 
 	/* Variables for time calcualtion */
-	struct timespec spclock[2];
 	unsigned long long list_time;
 	unsigned long long list_count;
 	
@@ -94,19 +104,6 @@ void perform_linked_list() {
     thread2 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
     thread3 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
     thread4 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
-
-    while(thread_done < 4);
-    getnstimeofday(&spclock[1]);
-    kthread_stop(thread1);
-    kthread_stop(thread2);
-    kthread_stop(thread3);
-    kthread_stop(thread4);
-
-    thread_done = 0;
-    list_num = 1;
-
-	delay[INSERT] = calclock(spclock, &list_time, &list_count);
-    printk("linked list insert time: %lluns\n", delay[INSERT]);
 }
 
 
