@@ -9,12 +9,14 @@
 #include <linux/list.h>
 #include <linux/time.h>
 
+#define BILLION 1000000000
 #define MAX_COUNT 100000
 
 int counter;
 spinlock_t counter_lock;
 struct timespec spclock[2];
 struct task_struct *thread1, *thread2, *thread3, *thread4;
+unsigned long long delay;
 
 struct my_node {
 	struct list_head list;
@@ -37,7 +39,7 @@ static int writer_function(void *data) {
         if(counter == MAX_COUNT) {
             getnstimeofday(&spclock[1]);
 
-            unsigned long long delay = calclock(spclock);
+            delay = calclock(spclock);
             printk("spinlock linked list insertion: %lluns\n", delay);
         }
         spin_unlock(&counter_lock);
