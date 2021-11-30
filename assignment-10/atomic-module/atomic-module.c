@@ -8,31 +8,24 @@
 #define TRUE    1
 #define FALSE   0
 
-int running = FALSE;
 int grade = 0;
+int runningThreads[4] = {1, 1, 1, 1};
 
 int test_thread(void *_arg) {
     int *arg = (int *)_arg;
-    int i, thread_grade;
     
-    while(!kthread_should_stop()) {
-        // WAITING FOR NEXT GAME...
-        while(!__sync_lock_test_and_set(&running, running));
-        int sum = 0;
+    int t_grade = __sync_fetch_and_add(&grade, 1);
+    
+    __sync_lock_test_and_set(&runningThreads[*arg], FALSE); 
 
-        for(i=0; i<10000; i++) {
-            sum += i;
-        }
+    printk("I'm Alive!! %d, grade: %d\n", *arg, t_grade);
 
-        thread_grade = __sync_fetch_and_add(&grade, 1);
-        
-        printk("argument: %d, grade: %d\n", *arg, thread_grade);
-        if(thread_grade == 4) {
-            __sync_val_compare_and_swap(&thread_grade, 4, 0);
-            __sync_lock_test_and_set(&running, FALSE);
-        }
+    __sync_val_compare_and_swap(&grade, 4, -1);
+
+    if(grade == -1) {
+	printk("All Threads are done!\n");
     }
-
+    
     kfree(arg);
     return 0;
 }
