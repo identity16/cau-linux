@@ -29,6 +29,8 @@ unsigned long long delay[3] = {0,};
 
 spinlock_t list_lock;
 struct timespec spclock[2];
+unsigned long long list_time;
+unsigned long long list_count;
 struct task_struct *thread1, *thread2, *thread3, *thread4;
 
 int insert_linked_list(void *ptr_head);
@@ -91,8 +93,6 @@ void perform_linked_list() {
 	int i;
 
 	/* Variables for time calcualtion */
-	unsigned long long list_time;
-	unsigned long long list_count;
 	
 	/* Initialize List */
 	INIT_LIST_HEAD(&my_list);
