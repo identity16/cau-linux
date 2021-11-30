@@ -1,6 +1,9 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
+#include <linux/kthread.h>
+#include <linux/slab.h>
+#include <linux/delay.h>
 
 #define TRUE    1
 #define FALSE   0
