@@ -1,4 +1,4 @@
-obj-m := linked-list-module.o
+obj-m := spinlock-module.o
 
 KERNEL_DIR	:= /lib/modules/$(shell uname -r)/build
 PWD		:= $(shell pwd)

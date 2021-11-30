@@ -11,6 +11,8 @@
 #include <linux/sched.h>
 #include <linux/delay.h>
 
+#define FALSE 0
+#define TRUE 1
 #define INSERT 0
 #define SEARCH 1
 #define DELETE 2
@@ -28,8 +30,8 @@ unsigned long long delay[3] = {0,};
 spinlock_t list_lock;
 struct task_struct *thread1, *thread2, *thread3, *thread4;
 
-void insert_linked_list(struct list_head *ptr_head);
-void perform_linked_list();
+int insert_linked_list(void *ptr_head);
+void perform_linked_list(void);
 
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
@@ -49,13 +51,15 @@ module_init(spinlock_module_init);
 module_exit(spinlock_module_cleanup);
 MODULE_LICENSE("GPL");
 
-void insert_linked_list(struct list_head *ptr_head) {
+int insert_linked_list(void *ptr_head) {
+    struct list_head *my_list = (struct list_head *)ptr_head;
+
     while(TRUE) {
         spin_lock(&list_lock);
         if(list_num <= 100000) {
             struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
-            new->data = i;
-            list_add(&new->list, ptr_head);
+            new->data = list_num;
+            list_add(&new->list, my_list);
             list_num += 1;
             spin_unlock(&list_lock);
         } else {
@@ -65,6 +69,7 @@ void insert_linked_list(struct list_head *ptr_head) {
 	}
 
     __sync_fetch_and_add(&thread_done, 1);
+    return 0;
 }
 
 
@@ -85,10 +90,10 @@ void perform_linked_list() {
 	
 	/* add list element */
     getnstimeofday(&spclock[0]);
-    thread1 = kthread_run(insert_linked_list, &my_list, "insert_linked_list");
-    thread2 = kthread_run(insert_linked_list, &my_list, "insert_linked_list");
-    thread3 = kthread_run(insert_linked_list, &my_list, "insert_linked_list");
-    thread4 = kthread_run(insert_linked_list, &my_list, "insert_linked_list");
+    thread1 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
+    thread2 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
+    thread3 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
+    thread4 = kthread_run(&insert_linked_list, (void *)&my_list, "insert_linked_list");
 
     while(thread_done < 4);
     getnstimeofday(&spclock[1]);
@@ -101,7 +106,7 @@ void perform_linked_list() {
     list_num = 1;
 
 	delay[INSERT] = calclock(spclock, &list_time, &list_count);
-    printk("linked list insert time: %lluns\n", delay[INSERT])
+    printk("linked list insert time: %lluns\n", delay[INSERT]);
 }
 
 
