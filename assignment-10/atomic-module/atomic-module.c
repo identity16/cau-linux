@@ -9,16 +9,19 @@
 #define FALSE   0
 
 int grade = 0;
-int runningThreads[4] = {1, 1, 1, 1};
+int runningThreads[4] = {0,};
 
 int test_thread(void *_arg) {
     int *arg = (int *)_arg;
-    
+    int i;
     int t_grade = __sync_fetch_and_add(&grade, 1);
     
-    __sync_lock_test_and_set(&runningThreads[*arg], FALSE); 
+    __sync_lock_test_and_set(&runningThreads[*arg], TRUE);
 
-    printk("I'm Alive!! %d, grade: %d\n", *arg, t_grade);
+    for(i=0; i<100000; i++);
+
+    printk("I'm DONE! %d, grade: %d\n", *arg, t_grade);
+    __sync_lock_test_and_set(&runningThreads[*arg], FALSE);
 
     __sync_val_compare_and_swap(&grade, 4, -1);
 
