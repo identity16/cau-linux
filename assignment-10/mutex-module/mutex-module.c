@@ -114,7 +114,7 @@ static int __init mutex_mod_init(void) {
     INIT_LIST_HEAD(&my_list);
 
     getnstimeofday(&spclock[0]);
-    mutex_lock_init(&counter_lock);
+    mutex_init(&counter_lock);
     thread1 = kthread_run(writer_function, NULL, "writer_function");
     thread2 = kthread_run(writer_function, NULL, "writer_function");
     thread3 = kthread_run(writer_function, NULL, "writer_function");
