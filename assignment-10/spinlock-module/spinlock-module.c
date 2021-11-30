@@ -28,6 +28,7 @@ struct list_head my_list;
 unsigned long long calclock(struct timespec *spclock);
 
 static int writer_function(void *data) {
+    // INSERT
     while(counter < MAX_COUNT) {
         struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
 
@@ -41,9 +42,41 @@ static int writer_function(void *data) {
 
             delay = calclock(spclock);
             printk("spinlock linked list insertion: %lluns\n", delay);
+            getnstimeofday(&spclock[0]);
         }
         spin_unlock(&counter_lock);
     }
+
+    __sync_val_compare_and_swap(&counter, MAX_COUNT, 0);
+
+    // SEARCH
+    int finding_num = 47182;
+    struct my_node *current, *prev;
+    prev = my_list;
+
+    while(counter < MAX_COUNT) {
+        spin_lock(&counter_lock);
+        counter++;
+        current = prev->list;
+        prev = current;
+
+        if(current->data == finding_num || counter == MAX_COUNT) {
+            getnstimeofday(&spclock[1]);
+
+            delay = calclock(spclock);
+            printk("spinlock linked list search: %lluns\n", delay);
+            counter = MAX_COUNT;
+
+            getnstimeofday(&spclock[0]);
+            spin_unlock(&counter_lock);
+            break;
+        }
+
+        spin_unlock(&counter_lock);
+    }
+
+    __sync_val_compare_and_swap(&counter, MAX_COUNT, 0);
+
     do_exit(0);
 }
 
