@@ -9,8 +9,11 @@
 #include <linux/list.h>
 #include <linux/time.h>
 
+#define MAX_COUNT 100000
+
 int counter;
 spinlock_t counter_lock;
+struct timespec spclock[2];
 struct task_struct *thread1, *thread2;
 
 struct my_node {
@@ -20,8 +23,10 @@ struct my_node {
 
 struct list_head my_list;
 
+unsigned long long calclock(struct timespec *spclock);
+
 static int writer_function(void *data) {
-    while(counter < 100000) {
+    while(counter < MAX_COUNT) {
         struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
 
         spin_lock(&counter_lock);
@@ -29,10 +34,13 @@ static int writer_function(void *data) {
         new->data = counter;
         list_add(&new->list, &my_list);
 
-        printk("%s, counter: %d, pid: %u\n", __func__, counter, current->pid);
-        spin_unlock(&counter_lock);
+        if(counter == MAX_COUNT) {
+            getnstimeofday(&spclock[1]);
 
-        msleep(500);
+            unsigned long long delay = calclock(spclock);
+            printk("spinlock linked list insertion: %lluns\n", delay);
+        }
+        spin_unlock(&counter_lock);
     }
     do_exit(0);
 }
@@ -44,16 +52,17 @@ static int __init spinlock_mod_init(void) {
     
     INIT_LIST_HEAD(&my_list);
 
+	getnstimeofday(&spclock[0]);
     spin_lock_init(&counter_lock);
     thread1 = kthread_run(writer_function, NULL, "writer_function");
     thread2 = kthread_run(writer_function, NULL, "writer_function");
+    thread3 = kthread_run(writer_function, NULL, "writer_function");
+    thread4 = kthread_run(writer_function, NULL, "writer_function");
 
     return 0;
 }
 
 static void __exit spinlock_mod_exit(void) {
-    // kthread_stop(thread1);
-    // kthread_stop(thread2);
     printk("%s, Exiting module\n", __func__);
 }
 
@@ -61,3 +70,21 @@ module_init(spinlock_mod_init);
 module_exit(spinlock_mod_exit);
 
 MODULE_LICENSE("GPL");
+
+
+unsigned long long calclock(struct timespec *spclock) {
+	long temp, temp_n;
+	unsigned long long timedelay = 0;
+
+	if (spclock[1].tv_nsec >= spclock[0].tv_nsec) {
+		temp = spclock[1].tv_sec - spclock[0].tv_sec;
+		temp_n = spclock[1].tv_nsec - spclock[0].tv_nsec;
+		timedelay = BILLION * temp + temp_n;
+	} else {
+		temp = spclock[1].tv_sec - spclock[0].tv_sec + 1;
+		temp_n = BILLION + spclock[1].tv_nsec - spclock[0].tv_nsec;
+		timedelay = BILLION * temp + temp_n;
+	}
+
+	return timedelay;
+}
