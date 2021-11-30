@@ -14,7 +14,7 @@
 int counter;
 spinlock_t counter_lock;
 struct timespec spclock[2];
-struct task_struct *thread1, *thread2;
+struct task_struct *thread1, *thread2, *thread3, *thread4;
 
 struct my_node {
 	struct list_head list;
