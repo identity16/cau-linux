@@ -21,21 +21,17 @@ struct my_node {
 struct list_head my_list;
 
 static int writer_function(void *data) {
-    while(!kthread_should_stop()) {
-        spin_lock(&counter_lock);
-        if(counter < 100000){
-            counter++;
-            
-            struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
-            new->data = counter;
-            list_add(&new->list, &my_list);
+    while(counter < 100000) {
+        struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
 
-            printk("%s, counter: %d, pid: %u\n", __func__, counter, current->pid);
-            spin_unlock(&counter_lock);
-        } else {
-            spin_unlock(&counter_lock);
-            break;
-        }
+        spin_lock(&counter_lock);
+        counter++;
+        new->data = counter;
+        list_add(&new->list, &my_list);
+
+        printk("%s, counter: %d, pid: %u\n", __func__, counter, current->pid);
+        spin_unlock(&counter_lock);
+
         msleep(500);
     }
     do_exit(0);
@@ -56,8 +52,8 @@ static int __init spinlock_mod_init(void) {
 }
 
 static void __exit spinlock_mod_exit(void) {
-    kthread_stop(thread1);
-    kthread_stop(thread2);
+    // kthread_stop(thread1);
+    // kthread_stop(thread2);
     printk("%s, Exiting module\n", __func__);
 }
 
