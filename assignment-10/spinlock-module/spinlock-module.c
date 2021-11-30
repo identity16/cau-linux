@@ -51,16 +51,16 @@ static int writer_function(void *data) {
 
     // SEARCH
     int finding_num = 47182;
-    struct my_node *current, *prev;
-    prev = my_list;
+    struct my_node *current_node, *prev_node;
+    prev_node = my_list;
 
     while(counter < MAX_COUNT) {
         spin_lock(&counter_lock);
         counter++;
-        current = prev->list;
-        prev = current;
+        current_node = prev_node->list;
+        prev_node = current_node;
 
-        if(current->data == finding_num || counter == MAX_COUNT) {
+        if(current_node->data == finding_num || counter == MAX_COUNT) {
             getnstimeofday(&spclock[1]);
 
             delay = calclock(spclock);
