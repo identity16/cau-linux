@@ -67,7 +67,6 @@ static int writer_function(void *data) {
             counter = MAX_COUNT * 2;
 
             current_node = list_first_entry(&my_list, struct my_node, list);
-            
             getnstimeofday(&spclock[0]);
             mutex_unlock(&counter_lock);
             break;
@@ -82,19 +81,21 @@ static int writer_function(void *data) {
     }
 
     // REMOVE
-     while(counter < MAX_COUNT * 3) {
+    struct my_node *tmp;
+    
+    while(counter < MAX_COUNT * 3) {
         mutex_lock(&counter_lock);
-
-        list_del(&current_node->list);
-		kfree(current_node);
+        
+	tmp = current_node;
+        current_node = list_next_entry(tmp, list);
+        list_del(&tmp->list);
+	kfree(tmp);
 
         if(counter == MAX_COUNT * 3 - 1) {
             getnstimeofday(&spclock[1]);
 
             delay = calclock(spclock);
             printk("mutex linked list remove: %lluns\n", delay);
-        } else {
-            current_node = list_next_entry(current_node, list);
         }
 
         counter++;
@@ -113,7 +114,7 @@ static int __init mutex_mod_init(void) {
     INIT_LIST_HEAD(&my_list);
 
     getnstimeofday(&spclock[0]);
-    mutex_init(&counter_lock);
+    mutex_lock_init(&counter_lock);
     thread1 = kthread_run(writer_function, NULL, "writer_function");
     thread2 = kthread_run(writer_function, NULL, "writer_function");
     thread3 = kthread_run(writer_function, NULL, "writer_function");
