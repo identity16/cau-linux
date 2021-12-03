@@ -7,18 +7,16 @@
 #include <linux/time.h>
 #include "list.h"
 
-void add_to_linked_list(int count);
-void remove_from_linked_list(int count);
-void search_from_linked_list(int count, int num);
+void search_from_linked_list(int count);
 
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
 int __init linked_list_module_init(void) {
-	search_from_linked_list(10000, 0);
-	search_from_linked_list(100000, 0);
-	search_from_linked_list(1000000, 0);
-	search_from_linked_list(10000000, 0);
-	search_from_linked_list(100000000, 0);
+	search_from_linked_list(10000);
+	search_from_linked_list(100000);
+	search_from_linked_list(1000000);
+	search_from_linked_list(10000000);
+	search_from_linked_list(100000000);
 
 	return 0;
 }
@@ -31,7 +29,7 @@ module_init(linked_list_module_init);
 module_exit(linked_list_module_cleanup);
 MODULE_LICENSE("GPL");
 
-void search_from_linked_list(int count, int num) {
+void search_from_linked_list(int count) {
 	struct list_node *my_list = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 	struct list_node *tmp;
 	struct list_node *current_node;
@@ -43,12 +41,13 @@ void search_from_linked_list(int count, int num) {
 	unsigned long long list_count;
 	unsigned long long delay;	
 	
+	printk("==========[%d]=========\n", count);
 	/* Initialize List */
 	CAU_INIT_LIST_HEAD(my_list);
 
 	
 	/* add list element */
-	getnstimeofday(&spclock[1]);
+	getnstimeofday(&spclock[0]);
 
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
@@ -66,8 +65,8 @@ void search_from_linked_list(int count, int num) {
     getnstimeofday(&spclock[0]);
 	
 	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-		if(current_node->data == num) {
-			printk("found: %d\n", num);
+		if(current_node->data == 0) {
+			printk("Traverse Done!");
             break;
 		}
 	}
