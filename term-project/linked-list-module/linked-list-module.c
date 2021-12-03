@@ -129,7 +129,7 @@ void remove_from_linked_list(int count) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 		int data = i;
 		new->data = &data;
-		list_add(new, my_list);
+		cau_list_add(new, my_list);
 	}
 	
 	getnstimeofday(&spclock[0]);
