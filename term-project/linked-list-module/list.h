@@ -1,5 +1,5 @@
-#ifndef _LIST_H
-#define _LIST_H
+#ifndef _CAU_LIST_H
+#define _CAU_LIST_H
 
 struct list_node {
 	struct list_node *prev;
