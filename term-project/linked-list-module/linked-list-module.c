@@ -82,16 +82,13 @@ void search_from_linked_list(int count, int num) {
 	
 	/* Initialize List */
 	CAU_INIT_LIST_HEAD(my_list);
-    prink("INIT!!");
 
 	
-    prink("No Problem!!");
 	/* add list element */
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 		new->data = i;
 		cau_list_add(new, my_list);
-        prink("No Problem!! %d", i);
 	}
 	
 	getnstimeofday(&spclock[0]);
@@ -137,7 +134,7 @@ void remove_from_linked_list(int count) {
 	
 	/* remove elements from list */
 	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-		cau_list_del(current_node, my_list);
+		cau_list_del(current_node);
 		kfree(current_node);
 	}
 
