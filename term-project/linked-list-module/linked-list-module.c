@@ -136,7 +136,7 @@ void remove_from_linked_list(int count) {
 	
 	/* remove elements from list */
 	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-		cau_list_del(current_node);
+		cau_list_del(current_node, my_list);
 		kfree(current_node);
 	}
 
