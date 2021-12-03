@@ -49,7 +49,7 @@ void add_to_linked_list(int count) {
 	unsigned long long delay;	
 	
 	/* Initialize List */
-	INIT_LIST_HEAD(my_list);
+	CAU_INIT_LIST_HEAD(my_list);
 
 	getnstimeofday(&spclock[0]);
 	
@@ -58,7 +58,7 @@ void add_to_linked_list(int count) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
         int data = i;
 		new->data = &data;
-		list_add(new, my_list);
+		cau_list_add(new, my_list);
 	}
 
 
@@ -82,7 +82,7 @@ void search_from_linked_list(int count, int num) {
 	unsigned long long delay;	
 	
 	/* Initialize List */
-	INIT_LIST_HEAD(my_list);
+	CAU_INIT_LIST_HEAD(my_list);
 
 	
 	/* add list element */
@@ -90,13 +90,13 @@ void search_from_linked_list(int count, int num) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 		int data = i;
 		new->data = &data;
-		list_add(new, my_list);
+		cau_list_add(new, my_list);
 	}
 	
 	getnstimeofday(&spclock[0]);
 	
 	/* Search number in list */
-	list_for_each_entry_safe(current_node, tmp, my_list) {
+	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
 		if(*((int *) current_node->data) == num) {
 			printk("found: %d\n", num);
 		}
@@ -121,7 +121,7 @@ void remove_from_linked_list(int count) {
 	unsigned long long delay;	
 	
 	/* Initialize List */
-	INIT_LIST_HEAD(my_list);
+	CAU_INIT_LIST_HEAD(my_list);
 
 	
 	/* add list element */
@@ -135,8 +135,8 @@ void remove_from_linked_list(int count) {
 	getnstimeofday(&spclock[0]);
 	
 	/* remove elements from list */
-	list_for_each_entry_safe(current_node, tmp, my_list) {
-		list_del(current_node);
+	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
+		cau_list_del(current_node);
 		kfree(current_node);
 	}
 
