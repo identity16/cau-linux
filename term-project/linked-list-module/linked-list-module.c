@@ -94,7 +94,9 @@ void search_from_linked_list(int count, int num) {
 	getnstimeofday(&spclock[0]);
 	
 	/* Search number in list */
+    prink("No Problem!!");
 	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
+        prink("No Problem!! %d", current_node->data);
 		if(current_node->data == num) {
 			printk("found: %d\n", num);
             break;
