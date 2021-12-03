@@ -56,8 +56,7 @@ void add_to_linked_list(int count) {
 	/* add list element */
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
-        int data = i;
-		new->data = &data;
+		new->data = i;
 		cau_list_add(new, my_list);
 	}
 
@@ -88,8 +87,7 @@ void search_from_linked_list(int count, int num) {
 	/* add list element */
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
-		int data = i;
-		new->data = &data;
+		new->data = i;
 		cau_list_add(new, my_list);
 	}
 	
@@ -97,8 +95,9 @@ void search_from_linked_list(int count, int num) {
 	
 	/* Search number in list */
 	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-		if(*((int *) current_node->data) == num) {
+		if(current_node->data == num) {
 			printk("found: %d\n", num);
+            break;
 		}
 	}
 
@@ -127,8 +126,7 @@ void remove_from_linked_list(int count) {
 	/* add list element */
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
-		int data = i;
-		new->data = &data;
+		new->data = i;
 		cau_list_add(new, my_list);
 	}
 	

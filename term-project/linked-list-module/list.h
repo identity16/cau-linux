@@ -4,7 +4,7 @@
 struct list_node {
 	struct list_node *prev;
 	struct list_node *next;
-	void *data;
+	int data;
 };
 
 
