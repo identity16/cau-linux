@@ -34,12 +34,12 @@ static inline void __cau_list_del(struct list_node *prev, struct list_node *next
 	prev->next = next;
 }
 
-static inline void cau_list_del(struct list_node *entry, struct list_node *head)
+static inline void cau_list_del(struct list_node *entry)
 {
 	__cau_list_del(entry->prev, entry->next);
     
-	entry->next = NULL;
-	entry->prev = NULL;
+	entry->next = entry;
+	entry->prev = entry;
 }
 
 // For Each
