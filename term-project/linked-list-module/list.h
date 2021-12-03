@@ -36,7 +36,7 @@ static inline void __list_del(struct list_node *prev, struct list_node *next)
 
 static inline void list_del(struct list_node *entry)
 {
-	__list_del_entry(entry->prev, entry->next);
+	__list_del(entry->prev, entry->next);
 	entry->next = NULL;
 	entry->prev = NULL;
 }
@@ -47,3 +47,5 @@ static inline void list_del(struct list_node *entry)
 		n = head->next;	\
         n != head; \
         pos = n, n = n->next)
+
+#endif

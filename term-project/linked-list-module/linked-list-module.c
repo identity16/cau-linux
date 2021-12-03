@@ -89,7 +89,7 @@ void search_from_linked_list(int count, int num) {
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 		int data = i;
-		new->data = &i;
+		new->data = &data;
 		list_add(new, my_list);
 	}
 	
@@ -128,7 +128,7 @@ void remove_from_linked_list(int count) {
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 		int data = i;
-		new->data = &i;
+		new->data = &data;
 		list_add(new, my_list);
 	}
 	
