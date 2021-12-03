@@ -42,7 +42,7 @@ static inline void list_del(struct list_node *entry)
 }
 
 // For Each
-#define list_for_each_entry_safe(pos, n, head, member)\
+#define list_for_each_entry_safe(pos, n, head)\
 	for (pos = head, \
 		n = head->next;	\
         n != head; \

@@ -39,7 +39,7 @@ module_exit(linked_list_module_cleanup);
 MODULE_LICENSE("GPL");
 
 void add_to_linked_list(int count) {
-	struct list_head my_list;
+	struct list_node *my_list = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 	int i;
 
 	/* Variables for time calcualtion */
@@ -49,15 +49,16 @@ void add_to_linked_list(int count) {
 	unsigned long long delay;	
 	
 	/* Initialize List */
-	INIT_LIST_HEAD(&my_list);
+	INIT_LIST_HEAD(my_list);
 
 	getnstimeofday(&spclock[0]);
 	
 	/* add list element */
 	for(i=0; i<count; i++) {
-		struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
-		new->data = i;
-		list_add(&new->list, &my_list);
+		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+        int data = i;
+		new->data = &data;
+		list_add(new, my_list);
 	}
 
 
@@ -69,9 +70,9 @@ void add_to_linked_list(int count) {
 }
 
 void search_from_linked_list(int count, int num) {
-	struct list_head my_list;
-	struct my_node *tmp;
-	struct my_node *current_node;
+	struct list_node *my_list = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+	struct list_node *tmp;
+	struct list_node *current_node;
 	int i;
 
 	/* Variables for time calcualtion */
@@ -81,21 +82,22 @@ void search_from_linked_list(int count, int num) {
 	unsigned long long delay;	
 	
 	/* Initialize List */
-	INIT_LIST_HEAD(&my_list);
+	INIT_LIST_HEAD(my_list);
 
 	
 	/* add list element */
 	for(i=0; i<count; i++) {
-		struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
-		new->data = i;
-		list_add(&new->list, &my_list);
+		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+		int data = i;
+		new->data = &i;
+		list_add(new, my_list);
 	}
 	
 	getnstimeofday(&spclock[0]);
 	
 	/* Search number in list */
-	list_for_each_entry_safe(current_node, tmp, &my_list, list) {
-		if(current_node->data == num) {
+	list_for_each_entry_safe(current_node, tmp, my_list) {
+		if(*((int *) current_node->data) == num) {
 			printk("found: %d\n", num);
 		}
 	}
@@ -107,9 +109,9 @@ void search_from_linked_list(int count, int num) {
 }
 
 void remove_from_linked_list(int count) {
-	struct list_head my_list;
-	struct my_node *tmp;
-	struct my_node *current_node;
+    struct list_node *my_list = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+	struct list_node *tmp;
+	struct list_node *current_node;
 	int i;
 
 	/* Variables for time calcualtion */
@@ -119,21 +121,22 @@ void remove_from_linked_list(int count) {
 	unsigned long long delay;	
 	
 	/* Initialize List */
-	INIT_LIST_HEAD(&my_list);
+	INIT_LIST_HEAD(my_list);
 
 	
 	/* add list element */
 	for(i=0; i<count; i++) {
-		struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
-		new->data = i;
-		list_add(&new->list, &my_list);
+		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+		int data = i;
+		new->data = &i;
+		list_add(new, my_list);
 	}
 	
 	getnstimeofday(&spclock[0]);
 	
 	/* remove elements from list */
-	list_for_each_entry_safe(current_node, tmp, &my_list, list) {
-		list_del(&current_node->list);
+	list_for_each_entry_safe(current_node, tmp, my_list) {
+		list_del(current_node);
 		kfree(current_node);
 	}
 
