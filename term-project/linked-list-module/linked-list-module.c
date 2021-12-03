@@ -82,21 +82,22 @@ void search_from_linked_list(int count, int num) {
 	
 	/* Initialize List */
 	CAU_INIT_LIST_HEAD(my_list);
+    prink("INIT!!");
 
 	
+    prink("No Problem!!");
 	/* add list element */
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
 		new->data = i;
 		cau_list_add(new, my_list);
+        prink("No Problem!! %d", i);
 	}
 	
 	getnstimeofday(&spclock[0]);
 	
 	/* Search number in list */
-    prink("No Problem!!");
 	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-        prink("No Problem!! %d", current_node->data);
 		if(current_node->data == num) {
 			printk("found: %d\n", num);
             break;
