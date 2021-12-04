@@ -9,7 +9,7 @@ struct cau_list_head {
     struct list_node *start;
     int *data_arr;
     int size;
-}
+};
 
 struct list_node {
 	struct list_node *prev;
@@ -39,8 +39,8 @@ static inline void __cau_list_add(struct list_node *new,
 }
 
 static inline void __cau_list_add_arr(struct list_node *new, int data, struct cau_list_head *head) {
-    if(head->size >= CAPACITY && size % CAPACITY == 0) {
-        head->data_arr = krealloc(head->data_arr, sizeof(int) * CAPACITY * (size / CAPACITY + 1), GFP_KERNEL);
+    if(head->size >= CAPACITY && head->size % CAPACITY == 0) {
+        head->data_arr = krealloc(head->data_arr, sizeof(int) * CAPACITY * (head->size / CAPACITY + 1), GFP_KERNEL);
     }
 
     head->data_arr[head->size] = data;
@@ -64,8 +64,8 @@ static inline void __cau_list_del_arr(struct list_node *entry, struct cau_list_h
     head->data_arr[entry->data_idx] = head->data_arr[head->size];
     entry->data_idx = -1;
     
-    if(head->size > CAPACITY && size % CAPACITY == 1) {
-        head->data_arr = krealloc(head->data_arr, sizeof(int) * CAPACITY * (size / CAPACITY + 1), GFP_KERNEL);
+    if(head->size > CAPACITY && head->size % CAPACITY == 1) {
+        head->data_arr = krealloc(head->data_arr, sizeof(int) * CAPACITY * (head->size / CAPACITY + 1), GFP_KERNEL);
     }
 }
 
@@ -91,7 +91,7 @@ static inline int cau_list_get_data(struct list_node *entry, struct cau_list_hea
         pos != head->start;    \
         pos = n, n = n->next)
 
-#define cau_list_for_each_data_unordered(idx, data, head)\
+#define cau_list_for_each_data_unordered(idx, head)\
 	for (idx = 0;  \
         idx < head->size;    \
         idx++)
