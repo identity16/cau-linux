@@ -18,6 +18,8 @@ void test_linked_list(int count);
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
 int __init linked_list_module_init(void) {
+    printk("[KERNEL Linked List]\n");
+	test_linked_list(1000);
 	test_linked_list(10000);
 	test_linked_list(100000);
 	test_linked_list(1000000);
