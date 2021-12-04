@@ -94,7 +94,7 @@ void search_from_linked_list(int count) {
 	/* remove elements from list */
     getnstimeofday(&spclock[0]);
 	
-    cau_list_for_each_entry(current_node, tmp, data, my_list) {
+    cau_list_for_each_entry_ordered(current_node, tmp, my_list) {
 		cau_list_del(current_node, my_list);
 		kfree(current_node);
 	}
