@@ -28,6 +28,12 @@ static inline void CAU_INIT_LIST_HEAD(struct cau_list_head *head) {
     head->data_arr = kmalloc(sizeof(int) * CAPACITY, GFP_KERNEL);
 }
 
+static inline void CAU_FREE_LIST_HEAD(struct cau_list_head *head) {
+    kfree(head->start);
+    kfree(head->data_arr);
+    kfree(head);
+}
+
 // Add
 static inline void __cau_list_add(struct cau_list_node *new,
 			      struct cau_list_node *prev,

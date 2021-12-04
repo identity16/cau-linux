@@ -35,12 +35,13 @@ void search_from_linked_list(int count) {
 	struct cau_list_node *tmp;
 	struct cau_list_node *current_node;
 	int i, data;
+    long sum;
 
 	/* Variables for time calcualtion */
 	struct timespec spclock[2];
 	unsigned long long list_time;
 	unsigned long long list_count;
-	unsigned long long delay;	
+	unsigned long long delay;
 	
 	printk("==========[%d]=========\n", count);
 	/* Initialize List */
@@ -63,32 +64,30 @@ void search_from_linked_list(int count) {
     
 	/* Search number in list */
     getnstimeofday(&spclock[0]);
-	
+
+    sum = 0;
 	cau_list_for_each_entry(current_node, tmp, data, my_list) {
-		if(data == 0) {
-            break;
-		}
+        sum += data;
 	}
 
 	getnstimeofday(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
-	printk("Search(ordered) from %d entries, delay: %llu\n", count, delay);
+	printk("Traverse(ordered) from %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 	
     /* Search number in list */
     getnstimeofday(&spclock[0]);
 	
+    sum = 0;
 	cau_list_for_each_data_unordered(i, my_list) {
         data = my_list->data_arr[i];
-		if(data == 0) {
-            break;
-		}
+        sum += data;
 	}
 
 	getnstimeofday(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
-	printk("Search(unordered) from %d entries, delay: %llu\n", count, delay);
+	printk("Traverse(unordered) from %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 
 	
 	/* remove elements from list */
@@ -103,6 +102,8 @@ void search_from_linked_list(int count) {
 
 	delay = calclock(spclock, &list_time, &list_count);
 	printk("Delete for %d times, delay: %llu\n", count, delay);
+
+    CAU_FREE_LIST_HEAD(my_list);
 }
 
 
