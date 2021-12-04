@@ -90,10 +90,9 @@ static inline int cau_list_get_data(struct cau_list_node *entry, struct cau_list
 }
 
 // For Each
-#define cau_list_for_each_entry(pos, n, data, head)\
+#define cau_list_for_each_entry_ordered(pos, n, head)\
 	for (pos = head->start->next, \
 		n = pos->next,  \
-        data = cau_list_get_data(pos, head);	\
         pos != head->start;    \
         pos = n, n = n->next)
 

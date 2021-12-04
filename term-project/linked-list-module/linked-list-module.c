@@ -66,7 +66,8 @@ void search_from_linked_list(int count) {
     getnstimeofday(&spclock[0]);
 
     sum = 0;
-	cau_list_for_each_entry(current_node, tmp, data, my_list) {
+	cau_list_for_each_entry_ordered(current_node, tmp, my_list) {
+        data = cau_list_get_data(current_node, my_list);
         sum += data;
 	}
 
