@@ -47,8 +47,8 @@ static inline void __cau_list_add_arr(struct cau_list_node *new, int data, struc
     new->data_idx = head->size;
 }
 
-static inline void cau_list_add(struct cau_list_node *new, int data, struct cau_list_node *current, struct cau_list_head *head) {
-	__cau_list_add(new, current, current->next);
+static inline void cau_list_add(struct cau_list_node *new, int data, struct cau_list_node *cur, struct cau_list_head *head) {
+	__cau_list_add(new, cur, cur->next);
     __cau_list_add_arr(new, data, head);
     head->size++;
 }
