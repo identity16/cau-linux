@@ -12,6 +12,7 @@ void search_from_linked_list(int count);
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
 int __init linked_list_module_init(void) {
+    printk("[CUSTOM Linked List]\n");
 	search_from_linked_list(10000);
 	search_from_linked_list(100000);
 	search_from_linked_list(1000000);
@@ -30,10 +31,10 @@ module_exit(linked_list_module_cleanup);
 MODULE_LICENSE("GPL");
 
 void search_from_linked_list(int count) {
-	struct list_node *my_list = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+	struct cau_list_head *my_list = kmalloc(sizeof(struct cau_list_head), GFP_KERNEL);
 	struct list_node *tmp;
 	struct list_node *current_node;
-	int i;
+	int i, data;
 
 	/* Variables for time calcualtion */
 	struct timespec spclock[2];
@@ -51,8 +52,7 @@ void search_from_linked_list(int count) {
 
 	for(i=0; i<count; i++) {
 		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
-		new->data = i;
-		cau_list_add(new, my_list);
+		cau_list_add(new, i, my_list->start, my_list);
 	}
 	
 	getnstimeofday(&spclock[1]);
@@ -64,9 +64,8 @@ void search_from_linked_list(int count) {
 	/* Search number in list */
     getnstimeofday(&spclock[0]);
 	
-	cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-		if(current_node->data == 0) {
-			printk("Traverse Done!");
+	cau_list_for_each_entry(current_node, tmp, data, my_list) {
+		if(data == 0) {
             break;
 		}
 	}
@@ -74,14 +73,29 @@ void search_from_linked_list(int count) {
 	getnstimeofday(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
-	printk("Search from %d entries, delay: %llu\n", count, delay);
+	printk("Search(ordered) from %d entries, delay: %llu\n", count, delay);
+	
+    /* Search number in list */
+    getnstimeofday(&spclock[0]);
+	
+	cau_list_for_each_data_unordered(i, my_list) {
+        data = my_list->data_arr[i];
+		if(data == 0) {
+            break;
+		}
+	}
+
+	getnstimeofday(&spclock[1]);
+
+	delay = calclock(spclock, &list_time, &list_count);
+	printk("Search(unordered) from %d entries, delay: %llu\n", count, delay);
 
 	
 	/* remove elements from list */
     getnstimeofday(&spclock[0]);
 	
-    cau_list_for_each_entry_safe(current_node, tmp, my_list) {
-		cau_list_del(current_node);
+    cau_list_for_each_entry(current_node, tmp, data, my_list) {
+		cau_list_del(current_node, my_list);
 		kfree(current_node);
 	}
 
