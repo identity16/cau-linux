@@ -13,16 +13,14 @@ struct my_node {
 	int data;
 };
 
-void search_from_linked_list(int count);
+void test_linked_list(int count);
 
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
 int __init linked_list_module_init(void) {
-	search_from_linked_list(10000);
-	search_from_linked_list(100000);
-	search_from_linked_list(1000000);
-	search_from_linked_list(10000000);
-	search_from_linked_list(100000000);
+	test_linked_list(10000);
+	test_linked_list(100000);
+	test_linked_list(1000000);
 
 	return 0;
 }
@@ -65,11 +63,12 @@ void add_to_linked_list(int count) {
 
 }
 
-void search_from_linked_list(int count) {
+void test_linked_list(int count) {
 	struct list_head my_list;
 	struct my_node *tmp;
 	struct my_node *current_node;
 	int i;
+    long sum;
 
 	/* Variables for time calcualtion */
 	struct timespec spclock[2];
@@ -96,19 +95,17 @@ void search_from_linked_list(int count) {
 
 	
 	/* Search number in list */
+    sum = 0;
 	getnstimeofday(&spclock[0]);
 
 	list_for_each_entry_safe(current_node, tmp, &my_list, list) {
-		if(current_node->data == 0) {
-			printk("Traverse Done!");
-            break;
-		}
+        sum += current_node->data;
 	}
 
 	getnstimeofday(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
-	printk("Search from %d entries, delay: %llu\n", count, delay);
+	printk("Traverse %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 
 	
 	/* remove elements from list */

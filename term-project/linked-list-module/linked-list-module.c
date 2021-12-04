@@ -7,30 +7,29 @@
 #include <linux/time.h>
 #include "list.h"
 
-void search_from_linked_list(int count);
+void test_linked_list(int count);
 
 unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
-int __init linked_list_module_init(void) {
+int __init cau_linked_list_module_init(void) {
     printk("[CUSTOM Linked List]\n");
-	search_from_linked_list(10000);
-	search_from_linked_list(100000);
-	search_from_linked_list(1000000);
-	search_from_linked_list(10000000);
-	search_from_linked_list(100000000);
+	test_linked_list(1000);
+	test_linked_list(10000);
+	test_linked_list(100000);
+	test_linked_list(1000000);
 
 	return 0;
 }
 
-void __exit linked_list_module_cleanup(void) {
+void __exit cau_linked_list_module_cleanup(void) {
 	printk("Bye Module\n");
 }
 
-module_init(linked_list_module_init);
-module_exit(linked_list_module_cleanup);
+module_init(cau_linked_list_module_init);
+module_exit(cau_linked_list_module_cleanup);
 MODULE_LICENSE("GPL");
 
-void search_from_linked_list(int count) {
+void test_linked_list(int count) {
 	struct cau_list_head *my_list = kmalloc(sizeof(struct cau_list_head), GFP_KERNEL);
 	struct cau_list_node *tmp;
 	struct cau_list_node *current_node;
@@ -74,7 +73,7 @@ void search_from_linked_list(int count) {
 	getnstimeofday(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
-	printk("Traverse(ordered) from %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
+	printk("Traverse(ordered) %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 	
     /* Search number in list */
     getnstimeofday(&spclock[0]);
@@ -88,7 +87,7 @@ void search_from_linked_list(int count) {
 	getnstimeofday(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
-	printk("Traverse(unordered) from %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
+	printk("Traverse(unordered) %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 
 	
 	/* remove elements from list */
