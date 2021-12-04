@@ -1,7 +1,7 @@
 #ifndef _CAU_LIST_H
 #define _CAU_LIST_H
 
-#define CAPACITY 100000
+#define CAPACITY 1000000
 
 #include <linux/slab.h> // for kmalloc
 
