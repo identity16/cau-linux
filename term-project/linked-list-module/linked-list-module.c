@@ -32,8 +32,8 @@ MODULE_LICENSE("GPL");
 
 void search_from_linked_list(int count) {
 	struct cau_list_head *my_list = kmalloc(sizeof(struct cau_list_head), GFP_KERNEL);
-	struct list_node *tmp;
-	struct list_node *current_node;
+	struct cau_list_node *tmp;
+	struct cau_list_node *current_node;
 	int i, data;
 
 	/* Variables for time calcualtion */
@@ -51,7 +51,7 @@ void search_from_linked_list(int count) {
 	getnstimeofday(&spclock[0]);
 
 	for(i=0; i<count; i++) {
-		struct list_node *new = kmalloc(sizeof(struct list_node), GFP_KERNEL);
+		struct cau_list_node *new = kmalloc(sizeof(struct cau_list_node), GFP_KERNEL);
 		cau_list_add(new, i, my_list->start, my_list);
 	}
 	
