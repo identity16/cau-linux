@@ -4,12 +4,13 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/slab.h> // for kmalloc
-#include <linux/time.h>
+#include <linux/ktime.h>
+#include <linux/timekeeping.h>
 #include "list.h"
 
 void test_linked_list(int count);
 
-unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count);
+unsigned long long calclock(struct timespec64 *spclock, unsigned long long *total_time, unsigned long long *total_count);
 
 int __init cau_linked_list_module_init(void) {
     printk("[CUSTOM Linked List]\n");
@@ -37,7 +38,7 @@ void test_linked_list(int count) {
     long sum;
 
 	/* Variables for time calcualtion */
-	struct timespec spclock[2];
+	struct timespec64 spclock[2];
 	unsigned long long list_time;
 	unsigned long long list_count;
 	unsigned long long delay;
@@ -48,21 +49,21 @@ void test_linked_list(int count) {
 
 	
 	/* add list element */
-	getnstimeofday(&spclock[0]);
+	ktime_get_real_ts64(&spclock[0]);
 
 	for(i=0; i<count; i++) {
 		struct cau_list_node *new = kmalloc(sizeof(struct cau_list_node), GFP_KERNEL);
 		cau_list_add(new, i, my_list->start, my_list);
 	}
 	
-	getnstimeofday(&spclock[1]);
+	ktime_get_real_ts64(&spclock[1]);
     
     delay = calclock(spclock, &list_time, &list_count);
 	printk("Add for %d times, delay: %llu\n", count, delay);
 	
     
 	/* Search number in list */
-    getnstimeofday(&spclock[0]);
+    ktime_get_real_ts64(&spclock[0]);
 
     sum = 0;
 	cau_list_for_each_entry_ordered(current_node, tmp, my_list) {
@@ -70,13 +71,13 @@ void test_linked_list(int count) {
         sum += data;
 	}
 
-	getnstimeofday(&spclock[1]);
+	ktime_get_real_ts64(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
 	printk("Traverse(ordered) %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 	
     /* Search number in list */
-    getnstimeofday(&spclock[0]);
+    ktime_get_real_ts64(&spclock[0]);
 	
     sum = 0;
 	cau_list_for_each_data_unordered(i, my_list) {
@@ -84,21 +85,21 @@ void test_linked_list(int count) {
         sum += data;
 	}
 
-	getnstimeofday(&spclock[1]);
+	ktime_get_real_ts64(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
 	printk("Traverse(unordered) %d entries, sum: %ld, delay: %llu\n", count, sum, delay);
 
 	
 	/* remove elements from list */
-    getnstimeofday(&spclock[0]);
+    ktime_get_real_ts64(&spclock[0]);
 	
     cau_list_for_each_entry_ordered(current_node, tmp, my_list) {
 		cau_list_del(current_node, my_list);
 		kfree(current_node);
 	}
 
-	getnstimeofday(&spclock[1]);
+	ktime_get_real_ts64(&spclock[1]);
 
 	delay = calclock(spclock, &list_time, &list_count);
 	printk("Delete for %d times, delay: %llu\n", count, delay);
@@ -107,7 +108,7 @@ void test_linked_list(int count) {
 }
 
 
-unsigned long long calclock(struct timespec *spclock, unsigned long long *total_time, unsigned long long *total_count) {
+unsigned long long calclock(struct timespec64 *spclock, unsigned long long *total_time, unsigned long long *total_count) {
 	long temp, temp_n;
 	unsigned long long timedelay = 0;
 
